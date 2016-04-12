@@ -1,5 +1,6 @@
 Pass-Chrome
 ===========
+-----------
 
 Rationale
 ---------
@@ -10,22 +11,24 @@ window or opening [qtPass](https://github.com/IJHack/qtpass) and switching windo
 The goal of this project is to bring all the security, control, and awesomeness of `pass` into the browser, where I find 
 myself needing it most often.
 
+------------
+
 Contributing
 ------------
 
-###Getting set up
+####Getting set up
 
 _NOTE: this project assumes you have `npm` installed_
 
 1. Install webpack globally: `npm i -g webpack`
 1. Install project dependencies: `npm i`
 
-###Running in development
+####Running in development
 
 You can start a develompent webserver with `npm run dev`; This development server builds and serves everything from 
 memory and does not create any output on the filesystem. This environment includes a [hot reload for react](https://github.com/gaearon/react-hot-loader) 
 which will update your source in the browser without refreshing or restarting the server.
 
-###Building
+####Building
 
 You can build static output by running `npm run build`; the output is placed in `<project root>/build`.
