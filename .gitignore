@@ -1,0 +1,5 @@
+# NPM dependencies
+.node_modules
+
+# Jetbrains IDE workspace, etc. files
+.idea
