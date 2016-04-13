@@ -1,6 +1,6 @@
 {
   "name": "pass-chrome",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Chrome extention implementation of [password-store](http://www.passwordstore.org/)",
   "main": "index.js",
   "scripts": {
