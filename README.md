@@ -26,9 +26,15 @@ _NOTE: this project assumes you have `npm` and `nvm` installed_
 1. Install project dependencies: `npm i`
 1. Load the extension into chrome:
   1. Go to [chrome://extensions](chrome://extensions)
-  1. Ensure the "Developer mode" checkbox is checked
+  1. Ensure the "Developer mode" checkbox is checked ![developer-mode](http://liminalsoftware.github.io/pass-chrome/images/developer-mode.png)
   1. Click "Load unpacked extension..."
   1. Navigate to the project root and click "Select"
+
+At this point you should see the extension in the list and available in the chrome menubar ![extension-button](http://liminalsoftware.github.io/pass-chrome/images/extension-button.png)
+
+If you don't see the extension's button check the hamburger menu ![more-extensions](http://liminalsoftware.github.io/pass-chrome/images/more-extensions.png)
+
+_NOTE: The extension popup/browser_action window won't render anything until you build for the first time -- see [Running in development / Workflow](#running-in-development--workflow)_
 
 ####Running in development / Workflow
 
