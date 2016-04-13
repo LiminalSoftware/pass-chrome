@@ -24,6 +24,11 @@ _NOTE: this project assumes you have `npm` and `nvm` installed_
   * _If you don't have `nvm`, make sure you're using the version of node that mathces what's in the `.nvmrc` file_
 1. Install webpack globally: `npm i -g webpack`
 1. Install project dependencies: `npm i`
+1. Load the extension into chrome:
+  1. Go to [chrome://extensions](chrome://extensions)
+  1. Ensure the "Developer mode" checkbox is checked
+  1. Click "Load unpacked extension..."
+  1. Navigate to the project root and click "Select"
 
 ####Running in development / Workflow
 
