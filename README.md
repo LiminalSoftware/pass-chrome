@@ -18,8 +18,10 @@ Contributing
 
 ####Getting set up
 
-_NOTE: this project assumes you have `npm` installed_
+_NOTE: this project assumes you have `npm` and `nvm` installed_
 
+1. Use the correct node version: `nvm use` to load the correct version from the `.nvmrc` file
+  * _If you don't have `nvm`, make sure you're using the version of node that mathces what's in the `.nvmrc` file_
 1. Install webpack globally: `npm i -g webpack`
 1. Install project dependencies: `npm i`
 
