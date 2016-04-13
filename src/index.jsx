@@ -1,4 +1,4 @@
-require("./css/bootstrap.css");
+require("../css/bootstrap.css");
 import { Jumbotron, Button } from 'react-bootstrap';
 
 import React from 'react';

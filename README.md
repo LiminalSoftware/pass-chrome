@@ -25,12 +25,14 @@ _NOTE: this project assumes you have `npm` and `nvm` installed_
 1. Install webpack globally: `npm i -g webpack`
 1. Install project dependencies: `npm i`
 
-####Running in development
+####Running in development / Workflow
 
-You can start a develompent webserver with `npm run dev`; This development server builds and serves everything from 
-memory and does not create any output on the filesystem. This environment includes a [hot reload for react](https://github.com/gaearon/react-hot-loader) 
-which will update your source in the browser without refreshing or restarting the server.
+You can start a build with `npm run dev`; this watches the filesystem for changes and rebuilds. Once each build is 
+complete you can simply reload in the inspector/console window or form the chome://extensions page to see your changes.
 
-####Building
+####Building for Production **(WIP)**
 
-You can build static output by running `npm run build`; the output is placed in `<project root>/build`.
+_NOTE: not currently implemented_
+
+You can build static output by running `npm run build`; the output is placed in `<project root>/build` which can then 
+be used as the root for packaging the extension with chrome.

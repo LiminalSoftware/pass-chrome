@@ -3,6 +3,11 @@ var path = require('path');
 
 module.exports = {
   entry: [
+  /**
+   * NOT CURRENTLY USED FOR CHROME EXTENSION DEV ENV / DEBUGGING WORKFLOW
+    //'webpack-dev-server/client?http://0.0.0.0:8080', // WebpackDevServer host and port
+    //'webpack/hot/only-dev-server',
+   */
     './src/index.jsx' // Your appʼs entry point
   ],
   devtool: process.env.WEBPACK_DEVTOOL || 'source-map',
@@ -18,6 +23,7 @@ module.exports = {
       {
         test: /\.jsx?$/,
         exclude: /(node_modules|bower_components)/,
+        //loaders: ['react-hot', 'babel'],
         loaders: ['babel'],
       },
 
@@ -54,5 +60,17 @@ module.exports = {
         loader: "url-loader?limit=10000&mimetype=image/png"
       }
     ]
-  }
+  },
+  /**
+   * NOT CURRENTLY USED FOR CHROME EXTENSION DEV ENV / DEBUGGING WORKFLOW
+  //devServer: {
+  //  //contentBase: "./",
+  //  noInfo: true, //  --no-info option
+  //  hot: true,
+  //  inline: true
+  //},
+   */
+  plugins: [
+    new webpack.NoErrorsPlugin()
+  ]
 };
