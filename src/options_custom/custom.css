@@ -2,39 +2,3 @@
 // Add your own style rules here, not in css/main.css
 // or css/setting.css for easy updating reasons.
 */
-
-/* TODO move to settings.css */
-.modal.backdrop.hide {
-    opacity: 0;
-    display: block;
-    pointer-events: none;
-}
-
-.modal.backdrop {
-    transition: opacity 250ms ease;
-    opacity: 1;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
-    z-index: 1000;
-    width: 100%;
-    height: 100%;
-    background: rgba(237, 237, 237, .6)
-}
-
-.modal.container {
-    z-index: 1100;
-    padding: 15px;
-    margin: 15%;
-    border: 1px solid #C2C2C2;
-    box-shadow: inset -8px 0 30px -30px black;
-    background: white;
-}
-
-.modal .title {
-    border-bottom: 1px solid #EEEEEE;
-    margin-bottom: 15px;
-}
