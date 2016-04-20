@@ -11,14 +11,14 @@
   },
   "default_locale": "en",
   "background": {
-    "page": "src/bg/background.html",
+    "page": "background/background.html",
     "persistent": false
   },
-  "options_page": "src/options_custom/index.html",
+  "options_page": "options/index.html",
   "browser_action": {
     "default_icon": "icons/icon19.png",
     "default_title": "Password Store",
-    "default_popup": "src/browser_action/browser_action.html"
+    "default_popup": "popup/popup.html"
   },
   "permissions": [
     "storage",

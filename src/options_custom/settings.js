@@ -7,7 +7,7 @@ chrome.storage.sync.get('options', function (store) {
       return setting.name == 'storedKeys';
     })[0];
 
-    if (options.keys.length > 0) {
+    if (options.keys && options.keys.length > 0) {
       keysSetting.options = options.keys.map(function(key){
         return {
           text: key.email,
@@ -39,7 +39,7 @@ chrome.storage.sync.get('options', function (store) {
         })
       });
 
-      settings.manifest.addKey.addEvent('modal_done', function(){
+      settings.manifest.addKey.addEvent('modal_submit', function(){
         var keyName = JSON.parse(localStorage.getItem('store.settings.keyName'))
           , keyText = JSON.parse(localStorage.getItem('store.settings.keyText'))
           ;
