@@ -1,6 +1,5 @@
 Pass-Chrome
 ===========
------------
 
 Rationale
 ---------
@@ -11,7 +10,6 @@ window or opening [qtPass](https://github.com/IJHack/qtpass) and switching windo
 The goal of this project is to bring all the security, control, and awesomeness of `pass` into the browser, where I find 
 myself needing it most often.
 
-------------
 
 Contributing
 ------------
