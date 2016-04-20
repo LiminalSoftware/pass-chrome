@@ -11,5 +11,3 @@
 //  	chrome.pageAction.show(sender.tab.id);
 //    sendResponse();
 //  });
-
-console.log('hello from background.js? I have no idea where this executes!');

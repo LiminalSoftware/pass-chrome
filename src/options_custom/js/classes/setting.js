@@ -239,8 +239,12 @@
                 "class": "modal title"
             });
 
-            this.modalDone = new Element("button", {
+            this.modalSubmit = new Element("button", {
                 "class": "modal done"
+            })
+
+            this.modalCancel = new Element("button", {
+                "class": "modal cancel"
             })
         },
 
@@ -264,8 +268,10 @@
                 (new Setting(that.modalContainer)).create(item);
             });
 
-            this.modalDone.set('html', 'Done');
-            this.modalDone.inject(this.modalContainer);
+            this.modalCancel.set('html', 'Cancel');
+            this.modalCancel.inject(this.modalContainer);
+            this.modalSubmit.set('html', 'Submit');
+            this.modalSubmit.inject(this.modalContainer);
         },
 
         "addEvents": function () {
@@ -277,9 +283,14 @@
                 this.modalBackdrop.removeClass('hide');
             }).bind(this));
 
-            this.modalDone.addEvent('click', (function(){
+            this.modalCancel.addEvent('click', (function(){
                 this.modalBackdrop.addClass('hide');
-                this.fireEvent('modal_done');
+                this.fireEvent('modal_cancel');
+            }).bind(this));
+
+            this.modalSubmit.addEvent('click', (function(){
+                this.modalBackdrop.addClass('hide');
+                this.fireEvent('modal_submit');
             }).bind(this));
         }
     });
