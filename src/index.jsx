@@ -1,3 +1,5 @@
+require('file?name=popup/popup.html!./popup.html');
+
 require("../css/bootstrap.css");
 import { Jumbotron, Button } from 'react-bootstrap';
 
@@ -16,6 +18,6 @@ export class App extends React.Component {
   }
 }
 
-ReactDOM.render(<App/>, document.querySelector("#myApp"));
+ReactDOM.render(<App/>, document.querySelector("#popup"));
 
 console.log('testing 123');

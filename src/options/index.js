@@ -1,9 +1,11 @@
+var openpgp = require('openpgp');
+
 chrome.storage.sync.get('options', function (store) {
   var options = store.options || {};
 
   window.addEvent("domready", function () {
     // Merge `options` with `settings` or something...
-    keysSetting = manifest.settings.filter(function (setting) {
+    var keysSetting = manifest.settings.filter(function (setting) {
       return setting.name == 'storedKeys';
     })[0];
 

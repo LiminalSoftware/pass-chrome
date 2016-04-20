@@ -16,7 +16,7 @@ module.exports = {
      */
       './src/index.jsx' // Your appʼs entry point
     ],
-    //options: ['./src/options_custom/entry.js']
+    //options: ['./src/options/index.js'],
     background: ['./src/bg/background.js']
   },
   devtool: process.env.WEBPACK_DEVTOOL || 'source-map',
@@ -101,13 +101,20 @@ module.exports = {
     //  template: 'src/options_custom/index.html',
     //  inject: 'head'
     //}),
-    new HtmlWebpackPlugin({
-      filename: 'popup/popup.html',
-      chunks: ['popup']
-    }),
+    /*
+     * Instead of using file loader in index.jsx:1 we could use this plugin
+     *   with a custom template that contains the app render element target (e.g. #myApp)
+     */
+    //new HtmlWebpackPlugin({
+    //  filename: 'popup/popup.html',
+    //  chunks: ['popup'],
+    //  inject: 'head',
+    //  template: 'src/popup.jsx'
+    //}),
     new HtmlWebpackPlugin({
       filename: 'background/background.html',
-      chunks: ['background']
+      chunks: ['background'],
+      inject: 'head'
     }),
   ]
 };
