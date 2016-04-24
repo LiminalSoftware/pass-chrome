@@ -16,7 +16,7 @@ module.exports = {
      */
       './src/index.jsx' // Your appʼs entry point
     ],
-    //options: ['./src/options/index.js'],
+    options: ['./src/options/index.js'],
     background: ['./src/bg/background.js']
   },
   devtool: process.env.WEBPACK_DEVTOOL || 'source-map',
