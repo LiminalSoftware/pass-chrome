@@ -15,8 +15,8 @@ export default (passphrase) => {
     ;
 
   //-- NOTE: return from default function
-  return initStoreKey().then((storeKey) => {
-    const STORE_KEY         = storeKey
+  return initKey().then((key) => {
+    const KEY               = key
       , storageProxyHandler = {
             /*
              * Proxies `chrome.storage.local` or `chrome.storage.sync` which are objects.
@@ -30,17 +30,85 @@ export default (passphrase) => {
               switch (name) {
                 case 'get':
                   //-- if `get`, decrypt before getting
-                  return (item, callback) => {
-                    return new Promise((resolve, reject) => {
-                      target[property](item, (value) => {
+                  return (items, callback) => {
+                    //-- NOTE: items can be a string or an array of strings
+                    items = typeof(items) === 'string' ? [items] : items;
 
-                      })
-                    })
+                    //-- used in conjunction with `Promise.all` when trying to resolve an object instead of an array
+                    let labelPromise     = (label, promise) => {
+                          return new Promise((resolve) => {
+                            promise.then((resolution) => {
+                              resolve({[label]: resolution})
+                            })
+                          })
+                        }
+                      , operationPromise = new Promise((resolve, reject) => {
+                          try {
+                            target[property](items, (encryptedValues) => {
+                              let decryptPromises = []
+                                ;
+
+                              Object.keys(encryptedValues).forEach((label) => {
+                                decryptPromises.push(labelPromise(label, decrypt(encryptedValues[label])));
+                              });
+
+                              Promise.all(decryptPromises).then((decryptedValuesArray) => {
+                                let decryptedValuesObject = {}
+                                  ;
+
+                                //-- EXAMPLE: convert something like `[{a: 1}, {b: 2}, {c: 3}]` to `{a: 1, b: 2, c: 3}`
+                                decryptedValuesArray.reduce((previous, current) => {
+                                  return Object.assign(previous, current);
+                                });
+
+                                resolve(decryptedValuesObject);
+                              })
+                            })
+                          } catch (error) {
+                            //-- NOTE: if `error` is uncaught via promise (eg. `operationPromise.catch`), it gets re-thrown
+                            reject(error);
+                          }
+                        })
+                      ;
+
+                    operationPromise.then(callback);
+                    return operationPromise;
                   };
                   break;
                 case 'set':
                   //-- if `set`, encrypt before setting
-                  return (item, callback) => {
+                  return (items, callback) => {
+                    //-- NOTE: items is an object
+                    let encryptPromises = []
+                      , operationPromise = new Promise((resolve, reject) => {
+                          try {
+                            Object.keys(items).forEach((label) => {
+                              encryptPromises.push(labelPromise(label, encrypt(item)))
+                            });
+
+                            Promise.all(encryptPromises).then((encryptedValuesArray) => {
+                              let encryptedValuesObject = {}
+                                ;
+
+                              //-- EXAMPLE: convert something like `[{a: 1}, {b: 2}, {c: 3}]` to `{a: 1, b: 2, c: 3}`
+                              encryptedValuesArray.reduce((previous, current) => {
+                                return Object.assign(previous, current);
+                              });
+
+                              target[property](encryptedValuesObject, () => {
+                                //-- success
+                                resolve(true);
+                              })
+                            })
+                          } catch (error) {
+                            //-- NOTE: if `error` is uncaught via promise (eg. `operationPromise.catch`), it gets re-thrown
+                            reject(error);
+                          }
+                        })
+                      ;
+
+                    operationPromise.then(callback);
+                    return operationPromise;
 
                   };
                   break;
@@ -60,7 +128,7 @@ export default (passphrase) => {
                               target[property](...args, resolve);
                             } catch (error) {
                               //-- NOTE: if `error` is uncaught via promise (eg. `operationPromise.catch`), it gets re-thrown
-                              reject(error)
+                              reject(error);
                             }
                           })
                         ;
@@ -77,33 +145,32 @@ export default (passphrase) => {
       chrome.storage.local.get('secureStore.pass-chrome', function (encryptedStore) {
         !encryptedStore ?
           newStore().then(resolve, reject) :
-          loadStore(encryptedStore).then(resolve, reject);
+          decrypt(encryptedStore).then(resolve, reject);
       })
     });
 
     function newStore() {
       return new Promise((resolve, reject) => {
         //-- defer resolution to next event loop as per promise spec
-        //-- NOTE: `newStore` returns a promise to be consistent with `loadStore`
+        //-- NOTE: `newStore` returns a promise to be consistent with `decrypt`
         setTimeout(() => {
           resolve(new Proxy(chrome.storage.local, storageProxyHandler))
         }, 0)
       })
     }
 
-    function loadStore(encryptedStore) {
-      let storeMessage = openpgp.message.readArmored(encryptedStore)
+    function decrypt(encrypted) {
+      let message = openpgp.message.readArmored(encrypted)
         ;
 
       return new Promise((resolve, reject) => {
-        //return ensureKeyUnlocked(key, passphrase) ? resolve(key) : reject(key)
         if (ensureKeyUnlocked(key, passphrase)) {
           return openpgp.decrypt({
-            message   : storeMessage,
-            publicKeys: [STORE_KEY],
-            privateKey: STORE_KEY
-          }).then((store) => {
-            resolve(store);
+            message   : message,
+            publicKeys: [KEY],
+            privateKey: KEY
+          }).then((decrypted) => {
+            resolve(decrypted);
           });
         } else {
           reject({code: ERRORS.KEY_LOCKED, message: 'store key could not be unlocked'})
@@ -112,7 +179,7 @@ export default (passphrase) => {
     }
   });
 
-  function initStoreKey() {
+  function initKey() {
     //-- retrieve `chrome.storage` gpg key from `localStorage`: the key used to encrypt `chrome.storage` items
     // is stored in `localStorage` (not sure if we'll continue to store it here)
     let keyContainer = JSON.parse(localStorage.getItem('secureStore.key'))
