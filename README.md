@@ -26,8 +26,11 @@ _NOTE: this project assumes you have `npm` and `nvm` installed_
 1. Load the extension into chrome:
   1. Go to [chrome://extensions](chrome://extensions)
   1. Ensure the "Developer mode" checkbox is checked ![developer-mode](http://liminalsoftware.github.io/pass-chrome/images/developer-mode.png)
+  
+    At this point, we need to jump to [running in development...](#running-in-development--workflow) to generate the first build and subsequently the `/dist` directory. Then you can resume from the next step.
+
   1. Click "Load unpacked extension..."
-  1. Navigate to the project root and click "Select"
+  1. Navigate to the `/dist` directory and click "Select"
 
 At this point you should see the extension in the list and available in the chrome menubar ![extension-button](http://liminalsoftware.github.io/pass-chrome/images/extension-button.png)
 
