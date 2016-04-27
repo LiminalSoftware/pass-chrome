@@ -36,8 +36,6 @@ At this point you should see the extension in the list and available in the chro
 
 If you don't see the extension's button check the hamburger menu ![more-extensions](http://liminalsoftware.github.io/pass-chrome/images/more-extensions.png)
 
-_NOTE: The extension popup/browser_action window won't render anything until you build for the first time -- see [Running in development / Workflow](#running-in-development--workflow)_
-
 ####Running in development / Workflow
 
 You can start a build with `npm run dev`; this watches the filesystem for changes and rebuilds. Once each build is 
