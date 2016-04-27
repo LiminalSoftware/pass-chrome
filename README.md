@@ -13,6 +13,7 @@ myself needing it most often.
 
 Contributing
 ------------
+####[Documentation](./doc)
 
 ####Getting set up
 
