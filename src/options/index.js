@@ -1,11 +1,16 @@
 //var encryptedStore = require('./encryptedStore');
 import SecureStore from '../lib/crypto/secureStore';
+// TODO: remove this!
 //console.log(SecureStore);
 //console.log(new SecureStore('badpassword'));
 //console.log(SecureStore.test());
 
 const storePromise = SecureStore('badpassword')
   .then((store)=> {
+    // TODO: remove this!
+    window.store = store;
+    //debugger;
+
     console.log('got store: ');
     console.log(store);
     return store.get('options')

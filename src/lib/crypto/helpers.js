@@ -2,7 +2,7 @@ import * as openpgp from 'openpgp';
 import {ERRORS} from '../constants';
 import {ensureUnlocked} from './keyring';
 
-export function encrypt({key, input}) {
+export function encrypt({key, input, passphrase=''}) {
   return new Promise((resolve, reject) => {
     //-- NOTE: unlock is needed for signing encrypted data (which we want; although, technically, it's optional)
     if (ensureUnlocked(key, passphrase)) {
@@ -21,7 +21,7 @@ export function encrypt({key, input}) {
   })
 }
 
-export function decrypt({key, input}) {
+export function decrypt({key, input, passphrase=''}) {
   let message = openpgp.message.readArmored(input)
     ;
 
@@ -32,7 +32,7 @@ export function decrypt({key, input}) {
         publicKeys: [key],
         privateKey: key
       }).then((decrypted) => {
-        resolve(decrypted);
+        resolve(decrypted.data);
       });
     } else {
       reject({code: ERRORS.KEY_LOCKED, message: 'store key could not be unlocked'})

@@ -1,6 +1,8 @@
 import * as openpgp from 'openpgp';
 import {decrypt, encrypt} from './helpers';
 import * as keyring from './keyring';
+
+// TODO: remove this!
 window.openpgp = openpgp;
 
 export default (passphrase) => {
@@ -24,7 +26,7 @@ export default (passphrase) => {
              * allow for continuation passing and automatically register callbacks if they're passed.
              */
             get: (target, property, receiver) => {
-              switch (name) {
+              switch (property) {
                 case 'get':
                   //-- if `get`, decrypt before getting
                   return (items, callback) => {
@@ -80,8 +82,9 @@ export default (passphrase) => {
                     (...args) => {
                       //-- function signatures for [`StorageArea`](https://developer.chrome.com/extensions/storage#type-StorageArea)
                       // all have `callback` as the last argument
-                      let callback         = args.splice(args.length - 1)
+                      let callback         = args.splice(args.length - 1)[0]
                         , operationPromise = new Promise((resolve, reject) => {
+                            console.log(callback);
                             try {
                               target[property](...args, resolve);
                             } catch (error) {
@@ -110,8 +113,10 @@ export default (passphrase) => {
               //-- if `itemsPromise` is provided, wait for it to resolve with items; otherwise, use `items`.
               //-- NOTE: if both `itemsPromise` and `items` are passed, `items` will be ignored.
               itemsPromise ?
-                itemsPromise.then(handle) :
-                handle(items);
+                itemsPromise.then((items) => {
+                  handle({items, resolve, reject})
+                }) :
+                handle({items, resolve, reject});
             } catch (error) {
               //-- NOTE: if `error` is uncaught via promise (eg. `operationPromise.catch`), it gets re-thrown
               reject(error);
@@ -122,26 +127,39 @@ export default (passphrase) => {
       operationPromise.then(callback);
       return operationPromise;
 
-      function handle(items) {
-        Object.keys(items).forEach((label) => {
-          valuePromises.push(labelPromise(label, itemHandler({key: KEY, input: items[label]})))
-        });
+      function handle({items, resolve, reject}) {
+        let itemsType = typeof(items)
+        ;
 
-        Promise.all(valuePromises).then((pairsArray) => {
-          let valuesObject = {}
-            ;
-
-          //-- EXAMPLE: convert something like `[{a: 1}, {b: 2}, {c: 3}]` to `{a: 1, b: 2, c: 3}`
-          pairsArray.reduce((previous, current) => {
-            return Object.assign(previous, current);
+        if (itemsType !== 'object') {
+          //-- prevent processing non-object enumerables (eg. strings: would encrypt each letter as it's own store item).
+          // consistent with `StorageArea` methods' interfaces
+          reject({code: ERRORS.TYPE_ERROR, message: `${ERRORS.TYPE_ERROR}: expected object, got ${itemsType}`})
+        } else {
+          Object.keys(items).forEach((label) => {
+            valuePromises.push(labelPromise(label, itemHandler({
+              key       : KEY,
+              passphrase: GENERATE_OPTIONS.passphrase,
+              input     : items[label]
+            })))
           });
 
-          resolutionHandler({
-            resolve,
-            reject,
-            valuesObject
-          });
-        })
+          Promise.all(valuePromises).then((pairsArray) => {
+            let valuesObject = {}
+              ;
+
+            //-- EXAMPLE: convert something like `[{a: 1}, {b: 2}, {c: 3}]` to `{a: 1, b: 2, c: 3}`
+            pairsArray.reduce((previous, current) => {
+              return Object.assign(previous, current);
+            }, valuesObject);
+
+            resolutionHandler({
+              resolve,
+              reject,
+              valuesObject
+            });
+          })
+        }
       }
 
       function labelPromise(label, promise) {
