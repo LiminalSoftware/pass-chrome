@@ -1,8 +1,20 @@
 Secure Store
 ============
 
+Secure store is a proxy of `chrome.storage.local` (or `chrome.storage.sync` with a future option). Its primary purpose 
+is to intercept calls to `.set` and `.get`, encrypting or decrypting (respectively) the passed data in-between caller 
+and receiver. It also intercepts calls to other methods (eg. `.remove`, `.clear`, etc.) as a result of the way proxies 
+work and fact that `chrome.storage.local` is an object. It does its best to get out of the way and provide normal functionality 
+of these other methods.
+
+Secondarily, it adapts the interface of all properties of `chrome.storage.local` which are functions, to return a 
+promise (as opposed to `undefined`). This change allows for the use of callback, which is consistent with the original 
+interface, but also allows for the use of promises if you would rather go that route. For an example of the practical 
+ramifications of this, reference the [demo](#demo) below.
+
+
 Currently the secure store generates a new gpg key when it's instantiated, using the passphrase passed in. 
-All values stored and retrieved from that instance will use that key with that passphrase.
+All values stored and retrieved from that instance of secure store will use that key with that passphrase.
 
 While this may not be very practical for the moment, there will be key storage/loading options as this gets built out more.
 
