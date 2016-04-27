@@ -32,7 +32,8 @@ chrome.storage.local.clear();
 
 //-- verify storage is empty
 chrome.storage.local.get((data)=> {
-  console.log('verify storage is empty:', data);
+  console.log('verify storage is empty:', data); 
+  //-- output: Object {}
 });
 
 
@@ -45,7 +46,8 @@ store.set({test: 'testing 123'})
       // chrome.storage.local.get((i)=>{console.log(i)})
 
       chrome.storage.local.get((encryptedData)=> {
-        console.log('verify there is encrypted value stored on the expected key:', encryptedData);
+        console.log('verify there is encrypted value stored on the expected key:', encryptedData); 
+        // output: Object {test: "-----BEGIN PGP MESSAGE----- ↵Version: OpenPGP.js v…tPOISI6Hpp2hR ↵=A4+M ↵-----END PGP MESSAGE----- ↵"}
       })
     })
     .then(()=> {
@@ -56,6 +58,7 @@ store.set({test: 'testing 123'})
     })
     .then((decryptedData)=> {
       console.log('retrieve an encrypted value and decrypt it:', decryptedData);
+      //-- output: Object {test: "testing 123"}
     })
     .then(()=> {
       //-- store a second encrypted value
@@ -70,6 +73,10 @@ store.set({test: 'testing 123'})
 
       chrome.storage.local.get((encryptedData)=> {
         console.log('verify that there are 2 encrypted value stored on the expected keys:', encryptedData);
+        //-- output: Object {
+        //             test: "-----BEGIN PGP MESSAGE----- ↵Version: OpenPGP.js v…tPOISI6Hpp2hR ↵=A4+M ↵-----END PGP MESSAGE----- ↵", 
+        //             test2: "-----BEGIN PGP MESSAGE----- ↵Version: OpenPGP.js v…LA5ksHrRUIL4t ↵=mFF2 ↵-----END PGP MESSAGE----- ↵"
+        //           }
       })
     })
     .then(()=> {
@@ -80,6 +87,7 @@ store.set({test: 'testing 123'})
     })
     .then((decryptedData)=> {
       console.log('retrieve both encrypted values and decrypt them:', decryptedData);
+      //-- output: Object {test: "testing 123", test2: "testing 456"}
     })
 ;
 ```
