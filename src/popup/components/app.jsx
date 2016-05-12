@@ -1,12 +1,7 @@
-require('file?name=popup/popup.html!./popup.html');
-
-require("../css/bootstrap.css");
+import React from 'react';
 import { Jumbotron, Button } from 'react-bootstrap';
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-
-export class App extends React.Component {
+class App extends React.Component {
   render() {
     return (
       <Jumbotron>
@@ -18,6 +13,4 @@ export class App extends React.Component {
   }
 }
 
-ReactDOM.render(<App/>, document.querySelector("#popup"));
-
-console.log('testing 123');
+export default App;
