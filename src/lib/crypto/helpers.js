@@ -7,7 +7,7 @@ export function encrypt({key, input, passphrase=''}) {
     //-- NOTE: unlock is needed for signing encrypted data (which we want; although, technically, it's optional)
     if (ensureUnlocked(key, passphrase)) {
       return openpgp.encrypt({
-        data       : input,
+        data       : JSON.stringify(input),
         // TODO: this is where we would add support for multiple key decryption
         publicKeys : [key],
         privateKeys: [key],
@@ -32,7 +32,7 @@ export function decrypt({key, input, passphrase=''}) {
         publicKeys: [key],
         privateKey: key
       }).then((decrypted) => {
-        resolve(decrypted.data);
+        resolve(JSON.parse(decrypted.data));
       });
     } else {
       reject({code: ERRORS.KEY_LOCKED, message: 'store key could not be unlocked'})

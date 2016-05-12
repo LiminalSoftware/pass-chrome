@@ -1,5 +1,6 @@
 import * as openpgp from 'openpgp';
-import {decrypt, encrypt} from './helpers';
+import { ERRORS } from '../constants';
+import { decrypt, encrypt } from './helpers';
 import * as keyring from './keyring';
 
 // TODO: remove this!
@@ -8,7 +9,7 @@ window.openpgp = openpgp;
 export default (passphrase) => {
   const GENERATE_OPTIONS = {
           numBits: 4096,
-          userIds: [{name: 'pass-chrome', email: 'pass-chrome@pass-chrome.example'}],
+          userIds: [ { name: 'pass-chrome', email: 'pass-chrome@pass-chrome.example' } ],
           passphrase
         }
     ;
@@ -25,20 +26,20 @@ export default (passphrase) => {
              * NOTE: to be consistent with the rest of the codebase, we're returning promises but also
              * allow for continuation passing and automatically register callbacks if they're passed.
              */
-            get: (target, property, receiver) => {
+            get (target, property, receiver) {
               switch (property) {
                 case 'get':
                   //-- if `get`, decrypt before getting
                   return (items, callback) => {
                     //-- NOTE: items can be a string or an array of strings
                     // (see `chrome.storage.local.get` documentation)
-                    items = typeof(items) === 'string' ? [items] : items;
+                    items = typeof(items) === 'string' ? [ items ] : items;
 
-                    let resolutionHandler = ({valuesObject, resolve, reject}) => {
+                    let resolutionHandler = ({ valuesObject, resolve, reject }) => {
                           resolve(valuesObject);
                         }
                       , itemsPromise      = new Promise((resolve, reject) => {
-                          target[property](items, (encryptedValues) => {
+                          target[ property ](items, (encryptedValues) => {
                             resolve(encryptedValues);
                           })
                         })
@@ -56,8 +57,8 @@ export default (passphrase) => {
                   //-- if `set`, encrypt before setting
                   return (items, callback) => {
                     //-- NOTE: items is an object
-                    let resolutionHandler = ({valuesObject: encryptedValuesObject, resolve, reject}) => {
-                          target[property](encryptedValuesObject, () => {
+                    let resolutionHandler = ({ valuesObject: encryptedValuesObject, resolve, reject }) => {
+                          target[ property ](encryptedValuesObject, () => {
                             //-- success
                             resolve(true);
                           })
@@ -77,16 +78,15 @@ export default (passphrase) => {
                   // and register passed callback (eg. `remove`, `clear`).
                   //-- NOTE: this preserves the original signature but makes callbacks optional allowing the use
                   // of promises instead (or both)
-                  return typeof(target[property]) !== 'function' ?
-                    target[property] :
+                  return typeof(target[ property ]) !== 'function' ?
+                    target[ property ] :
                     (...args) => {
                       //-- function signatures for [`StorageArea`](https://developer.chrome.com/extensions/storage#type-StorageArea)
                       // all have `callback` as the last argument
-                      let callback         = args.splice(args.length - 1)[0]
+                      let callback         = args.splice(args.length - 1)[ 0 ]
                         , operationPromise = new Promise((resolve, reject) => {
-                            console.log(callback);
                             try {
-                              target[property](...args, resolve);
+                              target[ property ](...args, resolve);
                             } catch (error) {
                               //-- NOTE: if `error` is uncaught via promise (eg. `operationPromise.catch`), it gets re-thrown
                               reject(error);
@@ -105,7 +105,7 @@ export default (passphrase) => {
     // TODO: allow proxying of `chrome.storage.sync`
     return new Proxy(chrome.storage.local, storageProxyHandler);
 
-    function proxyPromiseFactory({itemsPromise, items, itemHandler, callback, resolutionHandler}) {
+    function proxyPromiseFactory ({ itemsPromise, items, itemHandler, callback, resolutionHandler }) {
       let valuePromises    = []
           //-- used in conjunction with `Promise.all` when trying to resolve an object instead of an array
         , operationPromise = new Promise((resolve, reject) => {
@@ -114,9 +114,9 @@ export default (passphrase) => {
               //-- NOTE: if both `itemsPromise` and `items` are passed, `items` will be ignored.
               itemsPromise ?
                 itemsPromise.then((items) => {
-                  handle({items, resolve, reject})
+                  handle({ items, resolve, reject })
                 }) :
-                handle({items, resolve, reject});
+                handle({ items, resolve, reject });
             } catch (error) {
               //-- NOTE: if `error` is uncaught via promise (eg. `operationPromise.catch`), it gets re-thrown
               reject(error);
@@ -127,20 +127,20 @@ export default (passphrase) => {
       operationPromise.then(callback);
       return operationPromise;
 
-      function handle({items, resolve, reject}) {
+      function handle ({ items, resolve, reject }) {
         let itemsType = typeof(items)
-        ;
+          ;
 
         if (itemsType !== 'object') {
           //-- prevent processing non-object enumerables (eg. strings: would encrypt each letter as it's own store item).
           // consistent with `StorageArea` methods' interfaces
-          reject({code: ERRORS.TYPE_ERROR, message: `${ERRORS.TYPE_ERROR}: expected object, got ${itemsType}`})
+          reject({ code: ERRORS.TYPE_ERROR, message: `${ERRORS.TYPE_ERROR}: expected object, got ${itemsType}` })
         } else {
           Object.keys(items).forEach((label) => {
             valuePromises.push(labelPromise(label, itemHandler({
               key       : KEY,
               passphrase: GENERATE_OPTIONS.passphrase,
-              input     : items[label]
+              input     : items[ label ]
             })))
           });
 
@@ -162,10 +162,10 @@ export default (passphrase) => {
         }
       }
 
-      function labelPromise(label, promise) {
+      function labelPromise (label, promise) {
         return new Promise((resolve) => {
           promise.then((resolution) => {
-            resolve({[label]: resolution})
+            resolve({ [label]: resolution })
           })
         })
       }

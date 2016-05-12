@@ -1,9 +1,10 @@
 import * as openpgp from 'openpgp';
+import { LOCAL_STORAGE } from '../constants';
 
-export function init(options) {
+export function init (options) {
   //-- retrieve `chrome.storage` gpg key from `localStorage`: the key used to encrypt `chrome.storage` items
   // is stored in `localStorage` (not sure if we'll continue to store it here)
-  let keyContainer = JSON.parse(localStorage.getItem('secureStore.key'))
+  let keyContainer = JSON.parse(localStorage.getItem(LOCAL_STORAGE.SECURE_STORE_KEY))
     , keyArmored   = keyContainer && keyContainer.privateKeyArmored
     , storedKey    = loadKey(keyArmored)
     ;
@@ -11,8 +12,13 @@ export function init(options) {
   return new Promise((resolve, reject) => {
     if (typeof(storedKey) === 'undefined') {
       openpgp.generateKey(options)
-        .then((keyContainer) => {
-          resolve(keyContainer.key);
+        .then(({ key, privateKeyArmored, publicKeyArmored }) => {
+          localStorage.setItem(LOCAL_STORAGE.SECURE_STORE_KEY, JSON.stringify({
+            privateKeyArmored,
+            publicKeyArmored
+          }));
+
+          resolve(key);
         })
         .catch(reject);
     } else {
@@ -24,7 +30,7 @@ export function init(options) {
   })
 }
 
-export function loadKey(keyArmored) {
+export function loadKey (keyArmored) {
   if (!!keyArmored) {
     let loaded = openpgp.key.readArmored(keyArmored)
       ;
@@ -45,6 +51,6 @@ export function loadKey(keyArmored) {
   }
 }
 
-export function ensureUnlocked(key, passphrase) {
+export function ensureUnlocked (key, passphrase) {
   return !key.primaryKey.isDecrypted ? key.decrypt(passphrase) : true;
 }

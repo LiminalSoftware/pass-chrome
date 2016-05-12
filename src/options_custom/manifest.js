@@ -5,27 +5,22 @@ this.manifest = {
     "settings": [
       {
         tab: 'Manage Keys',
-        name: 'storedKeys',
+        name: 'privateKeys',
         type: 'listBox',
         multiple: true,
         label: 'Add all keys required for encryption/decryption of all passwords in your password store.',
-        group: 'Keys',
+        group: 'Private Keys',
         options: []
       },
       {
         tab: 'Manage Keys',
         name: 'addKey',
         type: 'modalButton',
-        group: 'Keys',
+        group: 'Private Keys',
         text: 'Add Key...',
         modal: {
           title: 'Add Key',
           contents: [
-            {
-              name : 'keyName',
-              type : 'text',
-              label: 'Key name (email address):'
-            },
             {
               name : 'keyText',
               type : 'textarea',
@@ -38,7 +33,7 @@ this.manifest = {
         tab: 'Manage Keys',
         name: 'removeKey',
         type: 'button',
-        group: 'Keys',
+        group: 'Private Keys',
         text: 'Remove Selected Key(s)'
       },
 
