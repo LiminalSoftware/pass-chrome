@@ -1,8 +1,17 @@
-//-- TODO: switch to `import * as openpgp from 'openpgp';`
-const openpgp = require('openpgp');
+import * as openpgp from 'openpgp';
+import { LOCAL_STORAGE } from '../lib/constants';
 import SecureStore from '../lib/crypto/secureStore';
 
-const storePromise = SecureStore({passphrase: 'badpassword'})
+const key = JSON.parse(localStorage.getItem(LOCAL_STORAGE.SECURE_STORE_KEY));
+const passphrase = 'badpassword';
+const generateCallback = ({privateKeyArmored, publicKeyArmored}) => {
+  localStorage.setItem(LOCAL_STORAGE.SECURE_STORE_KEY, JSON.stringify({
+    privateKeyArmored,
+    publicKeyArmored
+  }));
+};
+
+const storePromise = SecureStore({key, passphrase, generateCallback})
   .then((secureStore)=> {
     // TODO: remove this!
     window.store = secureStore;

@@ -6,15 +6,15 @@ import storageProxyFactory from './storageProxy'
 // TODO: remove this!
 window.openpgp = openpgp;
 
-const defaultGenOptions = {
+const defaultGenerateOptions = {
   numBits: 4096,
   userIds: [ { name: 'pass-chrome', email: 'pass-chrome@pass-chrome.example' } ]
 };
 
-const secureStore = ({ keyArmoredObject = {}, passphrase }) => {
+const secureStore = ({ keyArmoredObject = {}, passphrase, generateCallback }) => {
   const { publicKeyArmored, privateKeyArmored } = keyArmoredObject;
   const keyLoadedHandler = (key) => {
-    return storageProxyFactory({key, passphrase});
+    return storageProxyFactory({ key, passphrase });
   };
 
   if (publicKeyArmored && privateKeyArmored) {
@@ -33,10 +33,16 @@ const secureStore = ({ keyArmoredObject = {}, passphrase }) => {
         }
       }, 0)
     })
-  } else {
+  } else if (generateCallback && typeof(generateCallback) === 'function') {
     //-- NOTE: return from default function
-    return keyring.init({ keyArmoredObject, passphrase, defaultGenOptions })
+    return keyring.init({
+      keyArmoredObject,
+      passphrase,
+      generateOptions: { ...defaultGenerateOptions, callback: generateCallback }
+    })
       .then(keyLoadedHandler)
+  } else {
+    throw new Error({ code: ERRORS.NO_KEY, message: 'No key or generate callback was provided to the secureStore' });
   }
 };
 

@@ -4,23 +4,22 @@ import { LOCAL_STORAGE } from '../constants';
 export function init ({ key, passphrase, generateOptions }) {
   //-- retrieve `chrome.storage` gpg key from `localStorage`: the key used to encrypt `chrome.storage` items
   // is stored in `localStorage` (not sure if we'll continue to store it here)
-  const keyContainer = JSON.parse(localStorage.getItem(LOCAL_STORAGE.SECURE_STORE_KEY));
+  const keyContainer = key;
   const keyArmored = keyContainer && keyContainer.privateKeyArmored;
   const storedKey = loadKey(keyArmored);
 
   return new Promise((resolve, reject) => {
-    if (typeof(storedKey) === 'undefined') {
-      openpgp.generateKey({...generateOptions, passphrase})
-        .then(({ key, privateKeyArmored, publicKeyArmored }) => {
-          localStorage.setItem(LOCAL_STORAGE.SECURE_STORE_KEY, JSON.stringify({
-            privateKeyArmored,
-            publicKeyArmored
-          }));
+    if (generateOptions && typeof(storedKey) === 'undefined') {
+      openpgp.generateKey({ ...generateOptions, passphrase })
+        .then((keyObject) => {
+          let { key } = keyObject;
 
+          generateOptions.callback(keyObject);
           resolve(key);
         })
         .catch(reject);
     } else {
+      //-- TODO: is this still required?
       //-- defer resolution to next event loop as per promise spec
       setTimeout(() => {
         resolve(storedKey);
