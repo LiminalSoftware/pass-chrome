@@ -1,7 +1,8 @@
+//-- TODO: switch to `import * as openpgp from 'openpgp';`
 const openpgp = require('openpgp');
 import SecureStore from '../lib/crypto/secureStore';
 
-const storePromise = SecureStore('badpassword')
+const storePromise = SecureStore({passphrase: 'badpassword'})
   .then((secureStore)=> {
     // TODO: remove this!
     window.store = secureStore;
@@ -67,6 +68,7 @@ const storePromise = SecureStore('badpassword')
           //-- TODO: can't we just access the settings object directly instead?
           const keyText = JSON.parse(localStorage.getItem('store.settings.keyText'));
 
+          //-- TODO: use helper like `keyring.loadKey` (or whatever that gets refactored into)
           const { keys: [ key] } = openpgp.key.readArmored(keyText);
           const newKey = {
             uids : [

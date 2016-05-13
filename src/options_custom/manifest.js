@@ -5,20 +5,19 @@ this.manifest = {
     "settings": [
       {
         tab: 'Manage Keys',
-        name: 'publicKeys',
+        name: 'privateKeys',
         type: 'listBox',
         multiple: true,
-        label: 'Add all keys required for encryption of all passwords in your password store.',
-        group: 'Public Keys',
+        group: 'Private Keys',
         options: []
       },
       {
         tab: 'Manage Keys',
-        name: 'privateKeys',
+        name: 'publicKeys',
         type: 'listBox',
         multiple: true,
-        label: 'Add all keys required for decryption of all passwords in your password store.',
-        group: 'Private Keys',
+        label: 'Only needed to encrypt shared passwords',
+        group: 'Public Keys',
         options: []
       },
       {
