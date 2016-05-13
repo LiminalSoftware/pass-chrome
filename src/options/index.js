@@ -7,31 +7,37 @@ const storePromise = SecureStore('badpassword')
     window.store = secureStore;
 
     return new Promise((resolve) => {
-      secureStore.get([ 'options', 'privateKeys' ]).then((data) => {
+      secureStore.get([ 'options', 'publicKeys', 'privateKeys' ]).then((data) => {
         resolve({ ...data, secureStore })
       })
     });
   })
 
-  .then(({ secureStore, options, privateKeys = [] })=> {
-    options = options || {};
-    privateKeys = privateKeys || {};
+  .then(({ secureStore, options = {}, publicKeys = {}, privateKeys = {} })=> {
 
     window.addEvent("domready", function () {
-      // Merge `options` with `settings` or something...
-      let keysSetting = manifest.settings.filter(function (setting) {
-        return setting.name == 'privateKeys';
-      })[ 0 ];
+      const findSettingByName = (name) => {
+        return manifest.settings.filter(function (setting) {
+          return setting.name === name;
+        })[ 0 ]
+      };
+      const publicKeysSetting = findSettingByName('publicKeys');
+      const privateKeysSetting = findSettingByName('privateKeys');
 
-      if (Object.keys(privateKeys).length > 0) {
-        keysSetting.options = Object.keys(privateKeys).map(function (keyId) {
-          const key = privateKeys[ keyId ];
-          return {
-            text : `${key.uids.join(', ')}: ${key.keyId}`,
-            value: keyId
-          }
-        });
-      }
+      const mapKeysToSettingOptions = (keys, setting) => {
+        if (Object.keys(keys).length > 0) {
+          setting.options = Object.keys(keys).map(function (keyId) {
+            const key = keys[ keyId ];
+            return {
+              text : `${key.uids.join(', ')}: ${key.keyId}`,
+              value: keyId
+            }
+          });
+        }
+      };
+
+      mapKeysToSettingOptions(publicKeys, publicKeysSetting);
+      mapKeysToSettingOptions(privateKeys, privateKeysSetting);
 
       new FancySettings.initWithManifest(function (settings) {
         /*
@@ -39,19 +45,20 @@ const storePromise = SecureStore('badpassword')
          */
 
         settings.manifest.removeKey.addEvent('action', function () {
-          var removeIds = [];
+          const publicKeyOptions = [].slice.call(settings.manifest.publicKeys.element.options);
+          const privateKeyOptions = [].slice.call(settings.manifest.privateKeys.element.options);
+          const deleteSelectedKeys = (keys, options) => {
+            options.forEach(function (option) {
+              if (option.selected) delete keys[ option.value ];
+            });
+          };
 
-          [].slice.call(settings.manifest.privateKeys.element.options).forEach(function (option) {
-            if (option.selected) removeIds.push(option.value)
-          });
-
-          removeIds.forEach((keyId) => {
-            delete privateKeys[ keyId ];
-          });
+          deleteSelectedKeys(publicKeys, publicKeyOptions);
+          deleteSelectedKeys(privateKeys, privateKeyOptions);
 
           secureStore.set({ privateKeys }, function () {
-            //-- NOTE: since we're reloading we don't have to keep `keys`
-            // in sync with `settings.manifest.privateKeys` when modifying
+            //-- NOTE: since we're reloading we don't have to keep `privateKeys`
+            // in sync with `settings.manifest.privateKeys`, etc. when modifying
             location.reload();
           })
         });
@@ -61,9 +68,7 @@ const storePromise = SecureStore('badpassword')
           const keyText = JSON.parse(localStorage.getItem('store.settings.keyText'));
 
           const { keys: [ key] } = openpgp.key.readArmored(keyText);
-          //-- TODO: verify that this is a private key... `key.isPrivate()` (`key.isPublic()`)
-          debugger;
-          privateKeys.push({
+          const newKey = {
             uids : [
               ...(key.users.map(user => {
                 return user.userId.userid
@@ -71,14 +76,22 @@ const storePromise = SecureStore('badpassword')
             ],
             keyId: key.primaryKey.keyid.toHex(),
             armor: key.armor()
-          });
+          };
 
-          secureStore.set({ privateKeys }, function () {
+          const cleanup = () => {
             //-- cleanup entered key from localStorage
             localStorage.removeItem('store.settings.keyName');
             localStorage.removeItem('store.settings.keyText');
             location.reload();
-          });
+          };
+
+          if (key.isPublic()) {
+            publicKeys[ newKey.keyId ] = newKey;
+            secureStore.set({ publicKeys });
+          } else {
+            privateKeys[ newKey.keyId ] = newKey;
+            secureStore.set({ privateKeys });
+          }
         })
       });
     })

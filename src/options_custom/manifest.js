@@ -5,10 +5,19 @@ this.manifest = {
     "settings": [
       {
         tab: 'Manage Keys',
+        name: 'publicKeys',
+        type: 'listBox',
+        multiple: true,
+        label: 'Add all keys required for encryption of all passwords in your password store.',
+        group: 'Public Keys',
+        options: []
+      },
+      {
+        tab: 'Manage Keys',
         name: 'privateKeys',
         type: 'listBox',
         multiple: true,
-        label: 'Add all keys required for encryption/decryption of all passwords in your password store.',
+        label: 'Add all keys required for decryption of all passwords in your password store.',
         group: 'Private Keys',
         options: []
       },
@@ -16,7 +25,6 @@ this.manifest = {
         tab: 'Manage Keys',
         name: 'addKey',
         type: 'modalButton',
-        group: 'Private Keys',
         text: 'Add Key...',
         modal: {
           title: 'Add Key',
@@ -24,7 +32,7 @@ this.manifest = {
             {
               name : 'keyText',
               type : 'textarea',
-              label: 'Paste your gpg private key here:'
+              label: 'Paste your gpg public or private key here:'
             }
           ]
         }
@@ -33,7 +41,6 @@ this.manifest = {
         tab: 'Manage Keys',
         name: 'removeKey',
         type: 'button',
-        group: 'Private Keys',
         text: 'Remove Selected Key(s)'
       },
 
