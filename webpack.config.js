@@ -22,8 +22,20 @@ module.exports = {
       },
 
       {
+        test: /\.less$/,
+        loaders: [
+          'style?sourceMap',
+          'css?modules&importLoaders=1',
+          'resolve-url',
+          'less'
+        ]
+      },
+      {
         test: /\.css$/,
-        loader: 'style-loader!css-loader'
+        loaders: [
+          'style?sourceMap',
+          'css?modules&importLoaders=1'
+        ]
       },
       {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
