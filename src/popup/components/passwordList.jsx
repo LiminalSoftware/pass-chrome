@@ -2,18 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import CSSModules from 'react-css-modules';
 import Directory from './directory';
+import SearchBox from './searchBox';
 import styles from '../css/main.less';
-
-const SearchBox = CSSModules(() => {
-  return (
-    <div styleName="search-box">
-      <input placeholder="Search..." type="text"/>
-      <button>
-        <i className="fa fa-search"></i>
-      </button>
-    </div>
-  )
-}, styles);
 
 let PasswordList = CSSModules(({ directories, passwords }) => {
   return (
@@ -22,7 +12,7 @@ let PasswordList = CSSModules(({ directories, passwords }) => {
       <Directory directories={directories} passwords={passwords}/>
     </div>
   )
-});
+}, styles);
 
 // const stateToProps;
 // const dispatchToProps = () => {
