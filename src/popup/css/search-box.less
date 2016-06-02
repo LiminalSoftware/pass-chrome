@@ -1,0 +1,19 @@
+@line-height: 26px;
+
+.search-box {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+  height: @line-height;
+  line-height: @line-height;
+
+  & > input {
+    flex-grow: 1;
+  }
+
+  &>button {
+    flex-basis: @line-height;
+    height: @line-height;
+    padding: 0;
+  }
+}

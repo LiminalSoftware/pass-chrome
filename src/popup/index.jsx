@@ -1,7 +1,8 @@
 require('file?name=popup/popup.html!./popup.html');
-require("../../css/bootstrap.css");
+require('!!style!css!less!../css/font-awesome-4.6.3/font-awesome.less');
+require('!!style!css!../css/bootstrap/bootstrap.css');
 
-import React, { PropTypes } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
