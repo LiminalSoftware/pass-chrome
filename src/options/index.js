@@ -2,7 +2,7 @@ import * as openpgp from 'openpgp';
 import { LOCAL_STORAGE } from '../lib/constants';
 import SecureStore from '../lib/crypto/secureStore';
 
-const key = JSON.parse(localStorage.getItem(LOCAL_STORAGE.SECURE_STORE_KEY));
+const keyArmoredObject = JSON.parse(localStorage.getItem(LOCAL_STORAGE.SECURE_STORE_KEY)) || {};
 const passphrase = 'badpassword';
 const generateCallback = ({privateKeyArmored, publicKeyArmored}) => {
   localStorage.setItem(LOCAL_STORAGE.SECURE_STORE_KEY, JSON.stringify({
@@ -11,7 +11,7 @@ const generateCallback = ({privateKeyArmored, publicKeyArmored}) => {
   }));
 };
 
-const storePromise = SecureStore({key, passphrase, generateCallback})
+const storePromise = SecureStore({keyArmoredObject, passphrase, generateCallback})
   .then((secureStore)=> {
     // TODO: remove this!
     window.store = secureStore;
@@ -66,6 +66,7 @@ const storePromise = SecureStore({key, passphrase, generateCallback})
           deleteSelectedKeys(publicKeys, publicKeyOptions);
           deleteSelectedKeys(privateKeys, privateKeyOptions);
 
+          //-- TODO: store each key as a root item to reduce size of root items
           secureStore.set({ privateKeys }, function () {
             //-- NOTE: since we're reloading we don't have to keep `privateKeys`
             // in sync with `settings.manifest.privateKeys`, etc. when modifying
@@ -98,10 +99,14 @@ const storePromise = SecureStore({key, passphrase, generateCallback})
 
           if (key.isPublic()) {
             publicKeys[ newKey.keyId ] = newKey;
+            //-- TODO: store each key as a root item to reduce size of root items
             secureStore.set({ publicKeys });
+            cleanup();
           } else {
             privateKeys[ newKey.keyId ] = newKey;
+            //-- TODO: store each key as a root item to reduce size of root items
             secureStore.set({ privateKeys });
+            cleanup();
           }
         })
       });
