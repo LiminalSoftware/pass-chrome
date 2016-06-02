@@ -1,0 +1,19 @@
+@import './variables';
+
+.authenticate {
+  display:         flex;
+  flex-direction:  column;
+  justify-content: center;
+
+  min-height:      100px;
+  width:           @popup-width;
+  margin:          @popup-margin;
+
+  &, & > input {
+    text-align: center;
+  }
+
+  & > input {
+    margin: 0 0 10px 0;
+  }
+}

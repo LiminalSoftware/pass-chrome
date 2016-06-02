@@ -2,17 +2,18 @@ import React from 'react';
 // import { connect } from 'react-redux';
 import CSSModules from 'react-css-modules';
 import styles from '../css/main.less';
+import { Button } from 'react-bootstrap';
 
 const SearchBox = CSSModules(() => {
   return (
     <div styleName="search-box">
       <input placeholder="Search..." type="text"/>
-      <button title="search">
+      <Button title="search">
         <i className="fa fa-search"></i>
-      </button>
-      <button title="add">
+      </Button>
+      <Button title="add">
         <i className="fa fa-plus"></i>
-      </button>
+      </Button>
     </div>
   )
 }, styles);

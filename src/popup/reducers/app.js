@@ -1,4 +1,5 @@
-// import { combineReducers } from 'redux';
+import { combineReducers } from 'redux';
+import { routerReducer } from 'react-router-redux';
 // import passwordTree from 'passwordTree';
 
 const appReducer = (state = {}, action) => {
@@ -8,4 +9,9 @@ const appReducer = (state = {}, action) => {
   }
 };
 
-export default appReducer;
+const rootReducer = combineReducers({
+  appReducer,
+  routing: routerReducer
+});
+
+export default rootReducer;
